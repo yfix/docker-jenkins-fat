@@ -1,0 +1,13 @@
+    - name: Remove not needed packages
+      apt: "name={{ item }} state=absent"
+      with_items:
+        - landscape-client
+        - landscape-common
+
+    - name: Install required and useful packages
+      apt: "name={{ item }} state=installed"
+      with_items:
+        - python-software-properties
+        - wget
+        - curl
+        - nginx ### Do not allow apache2 instead

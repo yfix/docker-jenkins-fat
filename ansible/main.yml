@@ -1,0 +1,13 @@
+---
+- hosts: all
+
+  vars_files:
+    - config.yml
+
+  pre_tasks:
+    - include: tasks-apt.yml
+    - include: tasks-php.yml
+
+  roles:
+    - yfix.mc
+    - kosssi.composer

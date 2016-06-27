@@ -1,0 +1,8 @@
+php:
+  build: .
+  container_name: yfix_test_jenkins
+  restart: always
+#  volumes:
+#    - ./jenkins_home:/var/jenkins_home
+  ports:
+    - "8082:8080"
