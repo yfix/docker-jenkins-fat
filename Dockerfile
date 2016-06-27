@@ -1,4 +1,4 @@
-FROM jenkins
+FROM yfix/jenkins
 
 # if we want to install via apt
 USER root 

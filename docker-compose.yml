@@ -1,6 +1,6 @@
 php:
   build: .
-  container_name: yfix_test_jenkins
+  container_name: yfix_test_jenkins_fat
   restart: always
 #  volumes:
 #    - ./jenkins_home:/var/jenkins_home

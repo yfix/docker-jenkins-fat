@@ -1,2 +1,2 @@
 # docker-jenkins-fat
-Fat jenkins docker image (deprecated)
+Jenkins docker image intended to be "Fat" slave (lot of prebuilt tools onboard)
