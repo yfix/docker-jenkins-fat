@@ -28,23 +28,12 @@ RUN echo "===> Installing Docker" \
   \
   \
   \
-  && echo "===> Adding Ansible" \
-  && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 7BB9C367 \
-  && echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" | tee /etc/apt/sources.list.d/ansible.list \
-  && apt-get -y update && apt-get install -y --no-install-recommends \
-    ansible \
-  \
-  && echo "===> Adding ansible hosts" \
-  && echo '[local]\nlocalhost\n' > /etc/ansible/hosts \
-  \
-  \
-  \
   && echo "===> Adding PHP7" \
   && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E5267A6C \
   && echo "deb http://ppa.launchpad.net/ondrej/php/ubuntu trusty main" > /etc/apt/sources.list.d/php.list \
   \
   && apt-get update \
-  && apt-get purge -y --auto-remove php5-* \
+  && apt-get purge -y --auto-remove php5-* php-* \
   && apt-get install -y --no-install-recommends \
     php7.0 \
     php7.0-opcache \
@@ -132,6 +121,17 @@ RUN echo "===> Installing Docker" \
     cpp \
     gcc \
     php-dev \
+  \
+  \
+  \
+  && echo "===> Adding Ansible" \
+  && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 7BB9C367 \
+  && echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" | tee /etc/apt/sources.list.d/ansible.list \
+  && apt-get -y update && apt-get install -y --no-install-recommends \
+    ansible \
+  \
+  && echo "===> Adding ansible hosts" \
+  && echo '[local]\nlocalhost\n' > /etc/ansible/hosts \
   \
   \
   \
