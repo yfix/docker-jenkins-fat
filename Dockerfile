@@ -37,13 +37,101 @@ RUN echo "===> Installing Docker" \
   && echo "===> Adding ansible hosts" \
   && echo '[local]\nlocalhost\n' > /etc/ansible/hosts \
   \
-  && echo "===> Installing ansible roles" \
-  && ansible-galaxy install -ir /tmp/ansible/requirements.txt \
   \
-  && echo "===> Run ansible playbook" \
-  && ls -lr /tmp/ansible \
-  && ansible-playbook --version \
-  && ansible-playbook -vv -i "localhost," -c local /tmp/ansible/main.yml \
+  \
+  && echo "===> Adding PHP7" \
+  && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E5267A6C \
+  && echo "deb http://ppa.launchpad.net/ondrej/php/ubuntu trusty main" > /etc/apt/sources.list.d/php.list \
+  \
+  && apt-get update \
+  && apt-get purge -y --auto-remove php5-* \
+  && apt-get install -y --no-install-recommends \
+    php7.0 \
+    php7.0-opcache \
+    php7.0-bcmath \
+  \
+    php-amqp \
+    php-apcu \
+    php-apcu-bc \
+    php-bz2 \
+    php-cli \
+    php-curl \
+    php-fpm \
+    php-gd \
+    php-geoip \
+    php-gmp \
+    php-igbinary \
+    php-imagick \
+    php-intl \
+    php-json \
+    php-mbstring \
+    php-memcached \
+    php-mongodb \
+    php-msgpack \
+    php-mysql \
+    php-redis \
+    php-sqlite3 \
+    php-ssh2 \
+    php-uploadprogress \
+    php-uuid \
+    php-xml \
+    php-zip \
+    php-zmq \
+  \
+    php-dev \
+    libyaml-dev \
+    make \
+  \
+    wget \
+    curl \
+    git \
+  \
+  && cd /tmp && wget http://pear.php.net/go-pear.phar \
+  && php go-pear.phar \
+  \
+  && git clone https://github.com/php/pecl-file_formats-yaml.git /tmp/php-yaml \
+  && cd /tmp/php-yaml && git checkout php7 \
+  && phpize && ./configure && make && make install \
+  && echo 'extension=yaml.so' > /etc/php/7.0/fpm/conf.d/yaml.ini \
+  && cd /tmp && rm -rf /tmp/php-yaml \
+  \
+  && echo "====Fixing /etc/php links====" \
+  \
+  && ls -Rl /etc/php* \
+  \
+  && rm -vrf /etc/php/5.6 \
+  && rm -vrf /etc/php/7.0/apache* \
+  && cp -vrf /etc/php/7.0/* /etc/php/ \
+  && rm -vrf /etc/php/7.0/* \
+  && cp -vrf /etc/php/fpm/conf.d /etc/php/conf.d \
+  && ln -vs /etc/php/mods-available /etc/php/7.0/mods-available \
+  && ln -vs /etc/php/fpm /etc/php/7.0/fpm \
+  && ln -vs /etc/php/cli /etc/php/7.0/cli \
+  && rm -vrf /etc/php/fpm/conf.d \
+  && ln -vs /etc/php/conf.d /etc/php/fpm/conf.d \
+  && rm -vrf /etc/php/cli/conf.d \
+  && ln -vs /etc/php/conf.d /etc/php/cli/conf.d \
+  && ln -vs /usr/sbin/php-fpm7.0 /usr/local/sbin/php-fpm \
+  \
+  && ls -Rl /etc/php* && php -v && php -m && php --ini \
+  \
+  && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
+  && composer --version \
+  \
+  && composer global require --prefer-source --no-interaction jakub-onderka/php-parallel-lint \
+  \
+  && wget https://phar.phpunit.de/phpunit.phar && chmod +x phpunit.phar && mv phpunit.phar /usr/local/bin/phpunit \
+  && phpunit --version \
+  \
+  && apt-get purge -y --auto-remove \
+    apache2-bin \
+    autoconf \
+    automake \
+    autotools-dev \
+    binutils \
+    cpp \
+    gcc \
+    php-dev \
   \
   \
   \
@@ -54,6 +142,16 @@ RUN echo "===> Installing Docker" \
   && rm -rf /usr/{{lib,share}/share/{man,doc,info,gnome/help,cracklib},{lib,lib64}/gconv} \
   \
   && echo "===> Done"
+
+COPY docker /
+
+#  && echo "===> Installing ansible roles" \
+#  && ansible-galaxy install -ir /tmp/ansible/requirements.txt \
+#  \
+#  && echo "===> Run ansible playbook" \
+#  && ls -lr /tmp/ansible \
+#  && ansible-playbook --version \
+#  && ansible-playbook -vv -i "localhost," -c local /tmp/ansible/main.yml \
 
 ENV NVM_DIR /usr/local/nvm
 ENV NODE_VERSION 5.9.1
